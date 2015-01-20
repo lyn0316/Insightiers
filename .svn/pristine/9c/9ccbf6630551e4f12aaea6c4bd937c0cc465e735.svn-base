@@ -1,0 +1,76 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET    /                           				controllers.Application.login()
+GET    /authentication/:credentials				controllers.Application.authentication(credentials:String)
+GET    /logout									controllers.Application.logout()
+GET	   /sessionProtection						controllers.Application.sessionProtection()
+GET    /sendResetPasswordEmail/:credentials	    controllers.Application.sendResetPasswordEmail(credentials:String)
+GET    /resetPassword/:credentials              controllers.Application.resetPassword(credentials:String)
+GET    /reset/:password							controllers.Application.reset(password:String)
+
+# Staff
+GET    /retrieveAll								controllers.StaffController.retrieveAll()
+GET    /retrieveByID/:credentials				controllers.StaffController.retrieveByID(credentials:String)
+GET    /updateStaff/:credentials				controllers.StaffController.updateStaff(credentials:String)
+GET    /createStaff/:credentials				controllers.StaffController.createStaff(credentials:String)
+GET    /deleteStaff/:credentials			    controllers.StaffController.deleteStaff(credentials:String)
+GET	   /RetrieveStaffBySkills/:credentials		controllers.StaffController.retrieveStaffBySkills(credentials:String)
+GET    /retrieveAllSubproject/:credentials	    controllers.StaffController.retrieveAllSubproject(credentials:String)
+GET    /retrieveNumberOfStaffWithSkill		    controllers.StaffController.retrieveNumberOfStaffWithSkill()
+GET    /retrieveNumberOfProjectsByPM		    controllers.StaffController.retrieveNumberOfProjectsByPM()
+GET    /retrieveAllOngoingTasksByStaff/:credentials		    controllers.StaffController.retrieveAllOngoingTasksByStaff(credentials:String)
+GET    /filterStaffListByStaffInfo/:credentials	    controllers.StaffController.filterStaffListByStaffInfo(credentials:String)
+GET    /filterStaffListBySkill/:credentials	    controllers.StaffController.filterStaffListBySkill(credentials:String)
+
+# Account
+GET	   /updateAccount/:credentials				controllers.AccountController.updateAccount(credentials:String)
+GET	   /createAccount/:credentials				controllers.AccountController.createAccount(credentials:String)
+GET	   /deleteAccount/:credentials				controllers.AccountController.deleteAccount(credentials:String)
+GET	   /retrieveAllAccounts						controllers.AccountController.retrieveAllAccounts()
+GET	   /retrieveAccountByID/:credentials		controllers.AccountController.retrieveAccountByID(credentials:String)
+
+# Project
+GET	   /updateFromTrello/:credentials			controllers.ProjectController.updateFromTrello(credentials:String)
+GET	   /updateStatusFromTrello/:credentials			controllers.ProjectController.updateStatusFromTrello(credentials:String)
+GET	   /retrieveNumOfOngoingProjectsPerDay/:credentials		controllers.ProjectController.retrieveNumOfOngoingProjectsPerDay(credentials:String)
+GET	   /retrieveAllProjects						controllers.ProjectController.retrieveAllProjects()
+GET	   /retrieveProjectByID/:credentials		controllers.ProjectController.retrieveProjectByID(credentials:String)
+GET	   /createProject/:credentials				controllers.ProjectController.createProject(credentials:String)
+GET	   /retrieveProjectByStaff/:credentials		controllers.ProjectController.retrieveProjectByStaff(credentials:String)
+GET	   /updateProject/:credentials				controllers.ProjectController.updateProject(credentials:String)
+GET	   /createSubproject/:credentials			controllers.ProjectController.createSubproject(credentials:String)
+GET	   /RetrieveAllSubprojects/:credentials 	controllers.ProjectController.retrieveAllSubprojects(credentials:String)
+GET	   /RetrieveSubprojectByID/:credentials		controllers.ProjectController.retrieveSubprojectByID(credentials:String)
+GET	   /RetrieveStaffByProject/:credentials		controllers.ProjectController.retrieveStaffByProject(credentials:String)
+GET	   /RetrieveProjectActualStartDate/:credentials		controllers.ProjectController.retrieveProjectActualStartDate(credentials:String)
+GET	   /RetrieveProjectActualEndDate/:credentials		controllers.ProjectController.retrieveProjectActualEndDate(credentials:String)
+GET	   /updateSubproject/:credentials		    controllers.ProjectController.updateSubproject(credentials:String)
+GET	   /retrieveOngoingProjects/:credentials	controllers.ProjectController.retrieveOngoingProjects(credentials:String)
+GET	   /retrieveProjectsDue/:credentials		controllers.ProjectController.retrieveProjectsDue(credentials:String)
+GET	   /retrieveProjectsOnWarranty/:credentials controllers.ProjectController.retrieveProjectsOnWarranty(credentials:String)
+GET	   /retrieveAverageProjectNumberPerMonth/:credentials		    controllers.ProjectController.retrieveAverageProjectNumberPerMonth(credentials:String)
+GET	   /filterProjectListByProjectInfo/:credentials		controllers.ProjectController.filterProjectListByProjectInfo(credentials:String)
+GET	   /RetrieveStaffBySubproject/:credentials		controllers.ProjectController.retrieveStaffBySubproject(credentials:String)
+GET	   /RetrieveAvailableAndUnavailablePM/:credentials		controllers.ProjectController.retrieveAvailableAndUnavailablePM(credentials:String)
+GET    /updateProjectBoardId/:credentials		controllers.ProjectController.updateProjectBoardId(credentials:String)
+GET    /updateSubprojectCardId/:credentials 	controllers.ProjectController.updateSubprojectCardId(credentials:String)
+GET    /updateProjectListId/:credentials 	    controllers.ProjectController.updateProjectListId(credentials:String)
+
+#URLs
+GET    /dashboard								controllers.URLs.dashboard()
+GET    /resetPassword							controllers.URLs.resetPassword()
+GET    /project									controllers.URLs.project()
+GET    /staff									controllers.URLs.staff()
+GET    /timeOut									controllers.URLs.timeOut()
+GET    /adminAccount							controllers.URLs.adminAccount()
+GET    /adminStaff								controllers.URLs.adminStaff()
+GET    /editAccount								controllers.URLs.editAccount()
+GET    /simulation								controllers.URLs.simulation()
+GET    /projectSummary							controllers.URLs.projectSummary()
+GET    /staffSummary							controllers.URLs.staffSummary()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               			controllers.Assets.at(path="/public", file)

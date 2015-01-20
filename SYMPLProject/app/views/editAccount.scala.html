@@ -1,0 +1,147 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Admin</title>
+<!-- import twitter bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+<!-- import own css -->
+<link href="@routes.Assets.at("stylesheets/editAccount.css")" rel="stylesheet">
+
+<script>
+	var name = sessionStorage.getItem("name");
+	var accountID = sessionStorage.getItem("accountID");
+	if (name === "null"){
+		window.location.href = "/";
+	}
+</script>
+
+</head>
+
+<body>
+	<!-- Fixed navbar -->
+	<div class="container">
+    	<div class="navbar navbar-custom navbar-fixed-top" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span><span class="icon-bar"></span><span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand"><strong>SYMPLProj</strong></a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="dashboard"><span
+							class="ion-speedometer"></span>&nbsp;Dashboard</a></li>
+					<li><a href="simulation"><span
+							class="ion-play"></span>&nbsp;Simulation</a></li>
+					<li><a href="/projectSummary"><span
+							class="ion-clipboard"></span>&nbsp;Project</a></li>
+					<li><a href="/staffSummary"><span
+							class="ion ion-person-stalker"></span>&nbsp;Staff</a></li>
+					<li class="dropdown"><a href="/adminAccount"
+						class="dropdown-toggle" data-toggle="dropdown"><span
+							class="ion-person"></span>Admin <b
+							class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/adminAccount">Account Management</a></li>
+							<li><a href="/adminStaff">Staff Management</a></li>
+						</ul></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><span class="ion-flag"></span>&nbsp;Notification
+							<span class="label label-info">3</span> </a>
+						<ul class="dropdown-menu">
+							<li><a href="#"><span class="label label-danger">4:00
+										AM</span>20101003SMU</a></li>
+							<li><a href="#"><span class="label label-danger">4:30
+										AM</span>20101003NTU</a></li>
+							<li><a href="#"><span class="label label-danger">5:00
+										AM</span>20101003NUS</a></li>
+							<li class="divider"></li>
+							<li><a href="#" class="text-center">View All</a></li>
+						</ul></li>
+					<li class="dropdown active"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><span  class="ion-person"></span><span id="user" STYLE="font-family: Tahoma, Verdana, Segoe, sans-serif;" ></span>&nbsp;<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<!--li><a href="/editAccount"><span class="glyphicon glyphicon-cog"></span>Settings</a></li-->
+							<li><a id="logout" href="#"><span
+									class="glyphicon glyphicon-off"></span>Logout</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</div>
+    </div>
+    <!-- end of nav -->
+    
+    <!-- start of account table -->
+    <div class="accountContainer">
+    	<div class="col-xs-12 col-md-12">
+    		<div class="panel panel-custom col-sm-10" position="center">
+					<div class="panel-heading">
+    					<h4 class="panel-title">Account Details</h4>
+					</div>
+    				
+    				<div class="panel-body">
+						<form class="form-horizontal" role="form">
+							<div class="form-group">
+	    						<div class="col-sm-offset-1 col-sm-10">
+	      							<a class="btn btn-primary" id="editbutton">Edit Information</a>
+	    						</div>
+	  						</div>
+							
+	  						<div class="form-group">
+	    						<label for="inputName" class="col-sm-1 control-label">Name</label>
+	    						<div class="col-sm-11" id="displayName">
+	    							<p class="form-control-static" id="inputName"></p>
+	    						</div>
+	  						</div>
+	  						<div class="form-group">
+	    						<label for="inputEmail" class="col-sm-1 control-label">Email</label>
+	    						<div class="col-sm-11"   id="displayEmail">
+	    							<p class="form-control-static" id="inputEmail"></p>
+	   						 	</div>
+	  						</div>
+	  						
+	  						<div class="form-group">
+	    						<label for="inputPassword" class="col-sm-1 control-label">Password</label>
+	    						<div class="col-sm-11" id="displayPassword">
+	    							<p class="form-control-static" id="inputPassword"></p>
+	      						
+	   						 	</div>
+	  						</div>
+						</form>
+						
+						<div class="form-group">
+								<div class="pull-left" style="color:red" id="createInputError">
+									
+								</div>
+						
+	    						<div class="pull-right" id="displayButton">
+	    							
+	   						 	</div>
+	  					</div>
+	  					
+	  					
+					</div>
+					
+			</div>
+					
+		</div>
+    
+	</div>
+    <!-- end of account table -->
+    
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<!-- Latest bootstrap -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<!-- own javascript -->
+	<script src="@routes.Assets.at("javascripts/editAccount.js")"></script>
+</body>
+</html>

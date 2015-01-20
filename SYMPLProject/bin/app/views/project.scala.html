@@ -1,0 +1,838 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Project</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<!-- import twitter bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+<link rel="stylesheet" href="http://eonasdan.github.io/bootstrap-datetimepicker/content/bootstrap-datetimepicker.css">
+<link rel="stylesheet" href="http://harvesthq.github.io/chosen/chosen.css">
+<!-- import own css -->
+<link href="@routes.Assets.at("stylesheets/project.css")" rel="stylesheet">
+
+<script>
+	var name = sessionStorage.getItem("name");
+	if (name === "null") {
+		window.location.href = "/";
+	}
+	
+	var projectID = null;
+	var project = null;
+	var query = location.href;
+	query = decodeURIComponent(query);
+	var iLen = "projectID".length;
+	var iStart = query.indexOf("projectID");
+	if (iStart != -1){
+		projectID = query.substring(iStart + iLen);
+	}
+</script>
+<link rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.5.1.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="http://cdn.oesmith.co.uk/morris-0.5.1.min.js"></script>
+
+</head>
+
+<body>
+	<!-- Fixed navbar -->
+	<div class="container">
+		<div class="navbar navbar-custom navbar-fixed-top" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span><span class="icon-bar"></span><span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand"><strong>SYMPLProject</strong></a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="dashboard"><span
+							class="ion-speedometer"></span>&nbsp;Dashboard</a></li>
+					<li><a href="simulation"><span
+							class="ion-play"></span>&nbsp;Simulation</a></li>
+					<li  class="active"><a href="/projectSummary"><span
+							class="ion-clipboard"></span>&nbsp;Project</a></li>
+					<li><a href="/staffSummary"><span
+							class="ion ion-person-stalker"></span>&nbsp;Staff</a></li>
+					<li class="dropdown"><a href="/adminAccount"
+						class="dropdown-toggle" data-toggle="dropdown"><span
+							class="ion-person"></span>Admin <b
+							class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/adminAccount">Account Management</a></li>
+							<li><a href="/adminStaff">Staff Management</a></li>
+						</ul></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><span class="ion-flag"></span>&nbsp;Notification
+							<span class="label label-info">3</span> </a>
+						<ul class="dropdown-menu">
+							<li><a href="#"><span class="label label-danger">4:00
+										AM</span>20101003SMU</a></li>
+							<li><a href="#"><span class="label label-danger">4:30
+										AM</span>20101003NTU</a></li>
+							<li><a href="#"><span class="label label-danger">5:00
+										AM</span>20101003NUS</a></li>
+							<li class="divider"></li>
+							<li><a href="#" class="text-center">View All</a></li>
+						</ul></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><span  class="ion-person"></span><span id="user" STYLE="font-family: Tahoma, Verdana, Segoe, sans-serif;" ></span>&nbsp;<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<!--li><a href="/editAccount"><span class="glyphicon glyphicon-cog"></span>Settings</a></li-->
+							<li><a id="logout" href="#"><span
+									class="glyphicon glyphicon-off"></span>Logout</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- end of nav -->
+
+	<!-- start of side bar -->
+	<div id="sidebar" class="col-md-2">
+		<h3 class="row col-lg-12">Project List</h3>
+		<div class="row">
+		  	<div class="col-lg-12">
+		    	<div class="input-group">
+			      	<input type="text" class="form-control" id="searchInput">
+				    	<span class="input-group-btn">
+				        	<button class="btn btn-default" type="button" onclick="searchProject()">Search</button>
+				      	</span>
+		    	</div>
+		  	</div>
+  	  </div>
+  	  <table class="table table-hover" id="projectList">
+	  	<tbody id="table_project"></tbody>
+	  </table>
+	</div>
+	
+	<div class="row" id="topRow">
+		<div class ="col-md-5">
+			<div class="panel-body">
+				<div class="projectTitle">
+					<h1 id="codeInfo"></h1>
+					<div class="roe">
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editProject">Edit Project</button>
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#endProject">Close Project</button>
+					</div>
+					<br />
+					<h3>
+						Status<span id="statusInfo" class="pull-right"></span>
+					</h3>
+					<h3>
+						Start Date<span id="startInfo" class="pull-right"></span>
+					</h3>
+					<h3>
+						Planned End Date<span id="endInfo" class="pull-right"></span>
+					</h3>
+					<h3>
+						Actual End Date<span id="actualendInfo" class="pull-right"></span>
+					</h3>
+					<h3>
+						Project Manager<span id="pmInfo" class="pull-right"></span>
+					</h3>
+					<h3>
+						Developers<span id="developerInfo" class="pull-right"></span>
+					</h3>
+					<h3>
+						Last Modified On<span class="pull-right" id="modifiedonInfo"></span>
+					</h3>
+					<h3>
+						Last Modified By<span class="pull-right" id="modifiedbyInfo"></span>
+					</h3>
+				</div>
+				<div>
+					<p id="descriptionInfo"></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class ="panel-body col-md-7">
+				<div class="projectTitle">
+					<h1>Sub-Project Metrics</h1>
+				</div>
+			
+				<div class="nav-tabs-custom">
+	            	<!-- Tabs within a box -->
+	                <!-- Morris chart - Sales -->
+	                    <div class="chart tab-pane active" id="scatter-chart" style="position: relative; height: 225px;"></div>
+	                   
+	            </div><!-- /.nav-tabs-custom -->
+			
+		</div>
+	</div>
+	<hr>
+	<!-- end of side bar -->
+	<div class="row" id="bottomRow">
+		<h4><strong>Project Timeline</strong></h4>
+		<a id="addcard" class="btn btn-default pull-left" data-toggle="modal" data-target="#addCard">Create Task</a>
+		<div id="timeline-embed"></div>
+	</div>
+	<div id="endProject" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">x</button>
+					<h4 class="modal-title custom_align" id="Heading">End this
+						project?</h4>
+				</div>
+				<div class="modal-body">
+
+					<div class="alert alert-warning">
+						<span class="glyphicon glyphicon-warning-sign"></span> Are you
+						sure you want to close this project?
+					</div>
+
+				</div>
+				<div class="modal-footer ">
+					<button type="button" class="btn btn-warning" onclick="closeProject()">
+						<span class="glyphicon glyphicon-ok-sign"></span>Yes
+					</button>
+					<button type="button" class="btn btn-warning" data-dismiss="modal">
+						<span class="glyphicon glyphicon-remove"></span>No
+					</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+		
+	<div id="createProject" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" id="myModalLabel">Create Project</h4>
+					<a class="btn btn-default pull-right" data-dismiss="modal"><span
+						class="glyphicon glyphicon-remove"></span></a>
+				</div>
+
+				<div class="modal-body">
+					<!-- Name input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="initials">Client Abbreviation
+							</label>
+						<div class="col-md-9">
+							<input id="initials" name="initials" type="text" maxlength="3" placeholder="Please enter exactly 3 letters"
+								class="form-control">
+						</div>
+					</div>
+					<div id="initialsError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="clients">Client 
+							</label>
+						<div class="col-md-9">
+							<input id="client" name="client" type="text" placeholder=""
+								class="form-control">
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<!-- Email input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="description">Description</label>
+						<div class="col-md-9">
+							<textarea  id="description" name="description" placeholder=""
+								class="form-control"></textarea>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<!-- Email input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="startDate">Start
+							Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='startDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="start"/> <span
+									class="input-group-addon"> <span
+									id="startCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="startDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="duration">Duration</label>
+						<div class="col-md-9">
+							<div class="btn-group" data-toggle="buttons" id="duration">
+							  <label class="btn btn-default">
+							    <input type="radio" name="options" id="option1" value="3"> 3 months
+							  </label>
+							  <label class="btn btn-default">
+							    <input type="radio" name="options" id="option2" value="6"> 6 months
+							  </label>
+							  <label class="btn btn-default active">
+							    <input type="radio" name="options" id="option3" value="0" checked="checked"> Others
+							  </label>
+							</div>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="endDate">End Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='endDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="end"/> <span
+									class="input-group-addon"> <span
+									id="endCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="endDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="pm">Project
+							Manager</label>
+						<div class="col-md-9">
+							<select id="selectPM" data-placeholder="Assign a Project Manager" class="chosen-select" tabindex="5">
+								<option value=""></option>
+					            <optgroup id="availablePM" label="Available Project Managers">
+					            	<option value="6">Elaine</option>
+					            </optgroup>
+					            <optgroup id="unavailablePM" label="Unavailable Project Managers">
+					            	<option value="5">Yixi</option>
+					            </optgroup>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="skillSet">Skill Set Required</label>
+						<div class="col-md-9">
+							 <select id="skillsetRequired" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Select Skills Required">
+				                <option value=""></option>
+				                <option value="HTML">HTML</option>
+				                <option value="JAVA">JAVA</option>
+				                <option value="MySQL">MySQL</option>
+				                <option value="Java Script">Java Script</option>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="assignStaff">Developers</label>
+						<div class="col-md-9">
+							 <select id="selectFitDevelopers" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Developer">
+				                <option value=""></option>
+					            <optgroup  id="developersFit" label="Developers fit the skill set">
+					            </optgroup>
+				            </select>
+						</div>
+					</div>
+					<div id="inputError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="btn-group pull-right">
+						<button class="btn btn-primary" onclick="createProjectInfo()">Create</button>
+						<button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	
+	<div id="addCard" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" id="myModalLabel">Create Task</h4>
+					<a class="btn btn-default pull-right" data-dismiss="modal"><span
+						class="glyphicon glyphicon-remove"></span></a>
+				</div>
+
+				<div class="modal-body">
+					<!-- Name input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="taskName">Task Name
+							</label>
+						<div class="col-md-9">
+							<input id="addTaskName" name="taskName" type="text" class="form-control" placeholder="Task Name">
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="taskName">Task Description 
+							</label>
+						<div class="col-md-9">
+							<input id="addTaskDescription" name="taskDescription" type="text" class="form-control" placeholder="Task Description">
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="taskName">Task Type
+							</label>
+						<div class="col-md-9">
+							<select id="addCard_taskType" class="chosen-select" tabindex="8" style="width:350px;" data-placeholder="Subproject Type">
+				                <option value=""></option>
+				                <option value="coding">Coding Task</option>
+				                <option value="noncoding">Non-coding Task</option>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="taskName">Predecessor Task
+							</label>
+						<div class="col-md-9">
+							<select id="addCardPredecessorTask" class="chosen-select" tabindex="8" style="width:350px;" data-placeholder="Predecessor Task">
+				                <option value=""></option>
+				               	</select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label">Planned Start Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='addStartDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="addStart"/> <span
+									class="input-group-addon"> <span
+									id="startCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="addCardStartDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label">Planned End Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='addEndDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="addEnd" value=""/> <span
+									class="input-group-addon"> <span
+									id="endCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="addCardEndDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label">Staff</label>
+						<div class="col-md-9">
+							 <select id="addSubselectStaff" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Staff">
+				                <option value=""></option>
+					            <optgroup  id="addSubavailableStaff" label="Staff assigned to this project">
+					            </optgroup>
+					            <optgroup  id="addSubunavailableStaff" label="Staff not assigned to this project but fit the skill set">
+					            </optgroup>
+				            </select>
+						</div>
+					</div>
+					<div id="addCardError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="btn-group pull-right">
+						<button class="btn btn-primary" onclick="createSubproject()">Create</button>
+						<button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<div id="editProject" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" id="myModalLabel">Edit project</h4>
+					<a class="btn btn-default pull-right" data-dismiss="modal"><span
+						class="glyphicon glyphicon-remove"></span></a>
+				</div>
+
+				<div class="modal-body">
+					<!-- Name input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="initials">Client Abbreviation
+							</label>
+						<div class="col-md-9">
+							<input id="editInitials" name="initials" type="text" placeholder="Please enter exactly 3 letters"
+								class="form-control" disabled/>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="clients">Client 
+							</label>
+						<div class="col-md-9">
+							<input id="editClient" name="client" type="text" placeholder=""
+								class="form-control">
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<!-- Email input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="description">Description</label>
+						<div class="col-md-9">
+							<textarea  id="editDescription" name="description" placeholder=""
+								class="form-control"></textarea>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="startDate">Start Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='editStartDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="editStart"/> <span
+									class="input-group-addon"> <span
+									class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="editStartDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="duration">Duration</label>
+						<div class="col-md-9">
+							<div class="btn-group" data-toggle="buttons" id="editDuration">
+							  <label class="btn btn-default">
+							    <input type="radio" name="options" id="option1" value="3"> 3 months
+							  </label>
+							  <label class="btn btn-default">
+							    <input type="radio" name="options" id="option2" value="6"> 6 months
+							  </label>
+							  <label class="btn btn-default active">
+							    <input type="radio" name="options" id="option3" value="0" checked="checked"> Others
+							  </label>
+							</div>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="endDate">End Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='editEndDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="editEnd" value=""/> <span
+									class="input-group-addon"> <span
+									class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="editEndDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div id="dateError" style="color:rgb(228, 105, 105)"></div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="pm">Project
+							Manager</label>
+						<div class="col-md-9">
+							<select id="editSelectPM" data-placeholder="Assign a Project Manager" class="chosen-select" tabindex="5">
+								<option value=""></option>
+					            <optgroup id="editAvailablePM" label="Available Project Managers">
+					            </optgroup>
+					            <optgroup id="editUnavailablePM" label="Unavailable Project Managers">
+					            </optgroup>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="skillSet">Skill Set Required</label>
+						<div class="col-md-9">
+							 <select id="editSkillsetRequired" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Select Skills Required">
+				                <option value=""></option>
+				                <option value="HTML">HTML</option>
+				                <option value="JAVA">JAVA</option>
+				                <option value="MySQL">MySQL</option>
+				                <option value="Java Script">Java Script</option>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="assignStaff">Developers</label>
+						<div class="col-md-9">
+							 <select id="editFitDevelopers" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Developers">
+				                <option value=""></option>
+					            <optgroup  id="editDevelopersFit" label="Available Developer">
+					            </optgroup>
+				            </select>
+						</div>
+					</div>
+					<div id="editInputError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="btn-group pull-right">
+						<button class="btn btn-primary" onclick="editProject()">Update</button>
+						<button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	
+	<div id="editCard" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" id="myModalLabel">Edit  Task</h4>
+					<a class="btn btn-default pull-right" data-dismiss="modal"><span
+						class="glyphicon glyphicon-remove"></span></a>
+				</div>
+
+				<div class="modal-body">
+					<!-- Name input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="taskName">Task Name
+							</label>
+						<div class="col-md-9">
+							<input id="editTaskName" name="taskName" type="text" class="form-control" placeholder="Task Name">
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="taskName">Task Description
+							</label>
+						<div class="col-md-9">
+							<input id="editTaskDescription" name="taskName" type="text" class="form-control" placeholder="Task Decription">
+						</div>
+					</div>
+					<div id="taskNameError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="taskName">Task Type
+							</label>
+						<div class="col-md-9">
+							<select id="editTaskType" class="chosen-select" tabindex="8" style="width:350px;" data-placeholder="Select Skills Required">
+				                <option value=""></option>
+				                <option value="coding">Coding Task</option>
+				                <option value="noncoding">Non-coding Task</option>
+					        </select>
+						</div>
+					</div><div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label">Start
+							Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='editTaskStartDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="editTaskStart"/> <span
+									class="input-group-addon"> <span
+									id="startCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="editCardStartDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label">End Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='editTaskEndDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="editTaskEnd" value=""/> <span
+									class="input-group-addon"> <span
+									id="endCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="editCardEndDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label">Skill Set Required</label>
+						<div class="col-md-9">
+							 <select id="editSubskillsetRequired" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Select Skills Required">
+				                <option value=""></option>
+				                <option value="HTML">HTML</option>
+				                <option value="JS">JS</option>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label">Staff</label>
+						<div class="col-md-9">
+							 <select id="edit_subselectStaff" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Staff">
+				                <option value=""></option>
+					            <optgroup  id="editSubavailableStaff" label="Staff assigned to this project">
+					            </optgroup>
+					            <optgroup  id="editSubunavailableStaff" label="Staff not assigned to this project but fit the skill set">
+					            </optgroup>
+				            </select>
+						</div>
+					</div>
+					<div id="editCardError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="btn-group pull-right">
+						<button class="btn btn-primary" id="editSubprojectBtn">Update</button>
+						<button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	
+	<div id="deleteCard" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">x</button>
+					<h4 class="modal-title custom_align" id="Heading">Delete this card?</h4>
+				</div>
+				<div class="modal-body">
+
+					<div class="alert alert-warning">
+						<span class="glyphicon glyphicon-warning-sign"></span> Are you
+						sure you want to delete this card?
+					</div>
+
+				</div>
+				<div class="modal-footer ">
+					<button type="button" class="btn btn-warning">
+						<span class="glyphicon glyphicon-ok-sign"></span>Yes
+					</button>
+					<button type="button" class="btn btn-warning" data-dismiss="modal">
+						<span class="glyphicon glyphicon-remove"></span>No
+					</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$.ajax({
+	        url : '/retrieveProjectByID/' + projectID,
+	        type : 'GET',
+	        success : function(data){
+	        	console.log(data);
+				var jsonData = JSON.parse(data);
+	        	$("#codeInfo").html(jsonData.projectID);
+	        	$("#startInfo").html(jsonData.projectStartDate);
+	        	$("#endInfo").html(jsonData.projectEndDate);
+	        	$("#pmInfo").html(jsonData.projectManagerName);
+	        	$("#statusInfo").html(jsonData.status);
+	        	$("#descriptionInfo").html(jsonData.projectDescription);
+	        	$("#modifiedonInfo").html(jsonData.lastModifiedDate);
+	        	$("#modifiedbyInfo").html(jsonData.lastModifiedBy);
+	        	
+	        	$("#editInitials").val(jsonData.projectID);
+	        	$("#editClient").val(jsonData.client);
+	        	$("#editDescription").val(jsonData.projectDescription);
+	        	$("#editStart").val(jsonData.projectStartDate);
+	        	$("#editEnd").val(jsonData.projectEndDate);
+	        	$("#editSelectPM").val(jsonData.projectManager);
+	        	$("#editSelectPM").trigger("chosen:updated");
+	        	
+	        	var subprojects = {
+	    	    		"timeline":
+	    	    		{
+	    	    			"headline":projectID.substring(14,26),
+	    	    			"type":"default",
+	    	    			"startDate":jsonData.projectStartDate.replace("-", ",").replace("-", ","),
+	    	    			"endDate":jsonData.projectEndDate.replace("-", ",").replace("-", ","),
+	    	    			//"text":"<div class='row'><div class='col-md-2'>Project:</div><div class='col-md-6'>"+projectID.substring(14,26)+"</div></div><div class='row'><div class='col-md-2'>Start Date:</div><div class='col-md-6'>"+jsonData.projectStartDate+"</div></div><div class='row'><div class='col-md-2'>End Date:</div><div class='col-md-6'>"+jsonData.projectEndDate+"</div></div>",
+	    	    			"date": []
+	        			}
+	    	    	};
+	        	
+	        	$.ajax({
+	    	        url : '/RetrieveAllSubprojects/'+projectID,
+	    	        type : 'GET',
+	    	        success : function(data){
+	    	        	var jsonData = JSON.parse(data);
+	    	        	for (var i = 0; i < jsonData.length; i=i+1){
+	    	        		var subproject;
+	    	        		var plannedStart = jsonData[i].subprojectStartDate;
+	    	        		var plannedEnd = jsonData[i].subprojectEndDate;
+		    	        	var actualStart = jsonData[i].actualStartDate;
+		    	        	var actualEnd = jsonData[i].actualEndDate;
+		    	        	var name = jsonData[i].subprojectName;
+		    	        	var type = jsonData[i].subporjectType;
+		    	        	var description = jsonData[i].subprojectDescription;
+		    	        	var subID = jsonData[i].subprojectId;
+		    	        	//var staffList = "Li Dan, yinig";
+		    	        	
+		    	        	var predecessorTask = document.createElement("option");
+		    	        	predecessorTask.text = name;
+		    	        	
+		    	        	if(actualStart == "this subproject has not started"){
+	    	        			subproject = {
+		    	    					"headline":name,
+		    	    		            "startDate": plannedStart.replace("-", ",").replace("-", ","),
+		    	    		            "endDate": plannedEnd.replace("-", ",").replace("-", ","),
+		    	    		            "text":"<div class='row'><div class='col-md-4'>Name:<span>"+name+"</span></div></div><div class='row'><div class='col-md-4'>Description:<span>"+description+"</span></div></div><div class='row'><div class='col-md-4'>Type:<span>"+type+"</span></div></div><div class='row'><div class='col-md-4'>Planned Start Time:<span id='forStartChage'>"+plannedStart+"</span></div></div><div class='row'><div class='col-md-4'>Planned End Time:<span>"+plannedEnd+"</span></div></div><div class='row'><div class='col-md-4'>Developers:<span></span></div></div><div class='row'><div class='col-md-4'><button type='button' onclick=editCard('"+name+"','"+plannedStart+"','"+plannedEnd+"','"+type+"','"+description+"','"+subID+"') class='btn btn-primary pull-right' data-toggle='modal' data-target='#editCard'>Edit this Card</button></div></div><div class='row'><div class='col-md-4'><button type='button' class='btn btn-primary pull-right' data-toggle='modal' data-target='#deleteCard'>Delete this Card</button></div></div><div class='row'><div class='col-md-4'><button type='button' class='btn btn-primary pull-right' data-toggle='modal' data-target='#endCard'>End this Card</button></div></div>",
+		    	    			};
+	    	        			subprojects.timeline.date.push(subproject);
+	    	        			predecessorTask.value = plannedEnd + subID;
+		    	        	}else if(actualEnd == "this subproject has not ended"){
+		    	        		subproject = {
+		    	        				"headline":name,
+		    	    		            "startDate": actualStart.replace("-", ",").replace("-", ","),
+		    	    		            "endDate": plannedEnd.replace("-", ",").replace("-", ","),
+		    	    		            "text":"<div class='row'><div class='col-md-4'>Name:<span>"+name+"</span></div></div><div class='row'><div class='col-md-4'>Description:<span>"+description+"</span></div><div class='row'><div class='col-md-4'>Type:<span>"+type+"</span></div></div><div class='row'><div class='col-md-4'>Actual Start Time:<span id='forStartChage'>"+actualStart+"</span></div></div><div class='row'><div class='col-md-4'>Planned End Time:<span>"+plannedEnd+"</span></div></div><div class='row'><div class='col-md-4'>Developers:<span></span></div></div><div class='row'><div class='col-md-4'><button type='button' onclick=editCard('" +name+ "','" +actualStart+ "','" +plannedEnd+ "','"+type+"','"+description+"','"+subID+"') class='btn btn-primary pull-right' data-toggle='modal' data-target='#editCard'>Edit this Card</button></div></div><div class='row'><div class='col-md-4'><button type='button' class='btn btn-primary pull-right' data-toggle='modal' data-target='#deleteCard'>Delete this Card</button></div></div><div class='row'><div class='col-md-4'><button type='button' class='btn btn-primary pull-right' data-toggle='modal' data-target='#endCard'>End this Card</button></div></div>",
+		    	    			};
+		    	        		subprojects.timeline.date.push(subproject);
+		    	        		predecessorTask.value = plannedEnd +subID;
+		    	        	}else{
+		    	        		subproject = {
+		    	        				"headline":name,
+		    	    		            "startDate": actualStart.replace("-", ",").replace("-", ","),
+		    	    		            "endDate": actualEnd.replace("-", ",").replace("-", ","),
+		    	    		            "text":"<div class='row'><div class='col-md-4'>Name:<span>"+name+"</span></div></div><div class='row'><div class='col-md-4'>Description:<span>"+description+"</span></div><div class='row'><div class='col-md-4'>Type:<span>"+type+"</span></div></div><div class='row'><div class='col-md-4'>Actual Start Time:<span id='forStartChage'>"+actualStart+"</span></div></div><div class='row'><div class='col-md-4'>Actual End Time:<span>"+actualEnd+"</span></div></div><div class='row'><div class='col-md-4'>Developers:<span></span></div></div><div class='row'><div class='col-md-4'><button type='button' onclick=editCard('" +name+ "','" +actualStart+ "','" +actualEnd+ "','"+type+"','"+description+"','"+subID+"') class='btn btn-primary pull-right' data-toggle='modal' data-target='#editCard'>Edit this Card</button></div></div><div class='row'><div class='col-md-4'><button type='button' class='btn btn-primary pull-right' data-toggle='modal' data-target='#deleteCard'>Delete this Card</button></div></div><div class='row'><div class='col-md-4'><button type='button' class='btn btn-primary pull-right' data-toggle='modal' data-target='#endCard'>End this Card</button></div></div>",
+		    	    			};
+		    	        		subprojects.timeline.date.push(subproject);
+		    	        		predecessorTask.value = actualEnd + subID;
+		    	        	}
+		    	        	
+		    	        	var addCardPredecessorTask = document.getElementById("addCardPredecessorTask");
+			        		addCardPredecessorTask.appendChild(predecessorTask);
+			        		$("#addCardPredecessorTask").trigger("chosen:updated");
+	    	        	}
+	    	        	createStoryJS({
+	    		  			type: 'timeline',
+	    		  			width: '100%',
+	    		  			height: '100%',
+	    		  			source: subprojects,
+	    		  			embed_id: 'timeline-embed'
+	    		  		});
+	    	        },
+	    	        error : function(){
+	    	        }
+	    	    });
+	        },
+	        error : function(){
+	        }
+	    });
+
+    </script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<!-- Latest bootstrap -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="http://eonasdan.github.io/bootstrap-datetimepicker/scripts/moment.js"></script>
+	<script src="http://eonasdan.github.io/bootstrap-datetimepicker/scripts/bootstrap-datetimepicker.js"></script>
+	<script src="http://cdn.knightlab.com/libs/timeline/latest/js/storyjs-embed.js"></script>
+	<!-- select functions -->
+	<script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
+	<script src="@routes.Assets.at("javascripts/date.js")"></script>
+	<!-- own javascript -->
+	<script src="https://api.trello.com/1/client.js?key=61e43c9ee84eda5e86b7e8bc986ad707"></script>	
+	<script src="@routes.Assets.at("javascripts/project.js")"></script>	
+</body>
+</html>			            	

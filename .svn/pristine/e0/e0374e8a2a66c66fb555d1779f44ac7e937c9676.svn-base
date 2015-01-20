@@ -1,0 +1,37 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Reset Password Session Time Out</title>
+<!-- import twitter bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<!-- import flat ui -->
+<link href="@routes.Assets.at("stylesheets/flat-ui.css")" rel="stylesheet">
+<!-- import own css -->
+<link href="@routes.Assets.at("stylesheets/timeOut.css")" rel="stylesheet">
+</head>
+
+<body>
+	<div class="container">
+		
+		<form class="form-signin" id="display" role="form">
+
+		<h6 class="form-signin-heading" style="color:red">Important</h6>
+
+	   <h6 class="palette-paragraph" style="color:black">
+	   	Sorry, Your session timed out after a long time of inactivity. Please, click OK and sign in again
+		
+		</h6>
+		<div class="modal-footer">
+			 <button type="button" class="btn btn-primary btn-xs" name="okey">Okey</button>
+		
+		</div>
+	    </form>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="@routes.Assets.at("javascripts/timeOut.js")"></script>
+</body>
+</html>

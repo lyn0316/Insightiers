@@ -1,0 +1,56 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Login</title>
+<!-- import twitter bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<!-- import flat ui -->
+<link href="@routes.Assets.at("stylesheets/flat-ui.css")" rel="stylesheet">
+<!-- import own css -->
+<link href="@routes.Assets.at("stylesheets/login.css")" rel="stylesheet">
+</head>
+
+<body>
+	<!--Inspired by http://tutorialzine.com/2012/02/apple-like-login-form/ - Apple-like Login Form with CSS 3D Transforms -->
+
+	<div class="container">
+		<div id="output"></div>
+		<div class="row">
+	    	<div class="container" id="formContainer">
+	
+	          <form class="form-signin" id="login" role="form">
+	            <h6 class="form-signin-heading">Login</h6>
+	            <a href="#" id="flipToRecover" class="flipLink">
+	            	<p class="palette-paragraph">Forgot?</p>
+	            </a>  
+	            <input type="text" class="form-control" name="loginUsername" id="loginUsername" placeholder="Username" required autofocus>
+	            <input type="password" class="form-control" name="loginPass" id="loginPass" placeholder="Password" required>
+		        <label class="checkbox">
+					<input id="test" type="checkbox" value="remember-me">Remember Me
+				</label>
+	            <button class="btn btn-lg btn-primary btn-block" type="submit" name="signIn">Sign in</button>
+	          </form>
+	    
+	          <form class="form-signin" id="recover" role="form">
+	          	<a href="#" id="flipToLogin" class="flipLink">
+	              <p class="palette-paragraph">Back to Login</p>
+	            </a>
+	            <h6 class="form-signin-heading">Enter email address</h6>
+	            <input type="email" class="form-control" name="loginEmail" id="loginEmail" placeholder="Email address" required autofocus>
+	            
+	            <button class="btn btn-lg btn-primary btn-block" type="submit" name="recoverPass">Send Email</button>
+	          	<div id="reminder"></div>
+	          
+	          </form>
+	
+	        </div> <!-- /container -->
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="@routes.Assets.at("javascripts/login.js")"></script>
+</body>
+</html>

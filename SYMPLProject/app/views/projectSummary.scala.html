@@ -1,0 +1,298 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Project</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<!-- import twitter bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+<link rel="stylesheet" href="http://eonasdan.github.io/bootstrap-datetimepicker/content/bootstrap-datetimepicker.css">
+<link rel="stylesheet" href="http://harvesthq.github.io/chosen/chosen.css">
+<!-- import own css -->
+<link href="@routes.Assets.at("stylesheets/projectSummary.css")" rel="stylesheet">
+
+<script>
+	var name = sessionStorage.getItem("name");
+	if (name === "null") {
+		window.location.href = "/";
+	}
+	
+	var projectID = null;
+	var query = location.href;
+	query = decodeURIComponent(query);
+	var iLen = "projectID".length;
+	var iStart = query.indexOf("projectID");
+	if (iStart != -1){
+		projectID = query.substring(iStart + iLen);
+	}
+</script>
+
+</head>
+
+<body>
+	<!-- Fixed navbar -->
+	<div class="container">
+		<div class="navbar navbar-custom navbar-fixed-top" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span><span class="icon-bar"></span><span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand"><strong>SYMPLProj</strong></a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="dashboard"><span
+							class="ion-speedometer"></span>&nbsp;Dashboard</a></li>
+					<li><a href="simulation"><span
+							class="ion-play"></span>&nbsp;Simulation</a></li>
+					<li class="active"><a href="/projectSummary"><span
+							class="ion-clipboard"></span>&nbsp;Project</a></li>
+					<li><a href="/staffSummary"><span
+							class="ion ion-person-stalker"></span>&nbsp;Staff</a></li>
+					<li class="dropdown"><a href="/adminAccount"
+						class="dropdown-toggle" data-toggle="dropdown"><span
+							class="ion-person"></span>Admin <b
+							class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/adminAccount">Account Management</a></li>
+							<li><a href="/adminStaff">Staff Management</a></li>
+						</ul></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><span class="ion-flag"></span>&nbsp;Notification
+							<span class="label label-info">3</span> </a>
+						<ul class="dropdown-menu">
+							<li><a href="#"><span class="label label-danger">4:00
+										AM</span>20101003SMU</a></li>
+							<li><a href="#"><span class="label label-danger">4:30
+										AM</span>20101003NTU</a></li>
+							<li><a href="#"><span class="label label-danger">5:00
+										AM</span>20101003NUS</a></li>
+							<li class="divider"></li>
+							<li><a href="#" class="text-center">View All</a></li>
+						</ul></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><span  class="ion-person"></span><span id="user" STYLE="font-family: Tahoma, Verdana, Segoe, sans-serif;" ></span>&nbsp;<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<!--li><a href="/editAccount"><span class="glyphicon glyphicon-cog"></span>Settings</a></li-->
+							<li><a id="logout" href="#"><span
+									class="glyphicon glyphicon-off"></span>Logout</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- end of nav -->
+
+	<!-- start of side bar -->
+	<div id="sidebar" class="col-md-2">
+		<h3 class="row col-lg-12">Project List</h3>
+		<div class="row">
+		  	<div class="col-lg-12">
+		    	<div class="input-group">
+			      	<input type="text" class="form-control" id="searchInput">
+				    	<span class="input-group-btn">
+				        	<button class="btn btn-default" type="button" onclick="searchProject()">Search</button>
+				      	</span>
+		    	</div>
+		  	</div>
+  	  </div>
+  	  <table class="table table-hover" id="projectList">
+	  	<tbody id="table_project"></tbody>
+	  </table>
+	</div>
+	
+	<div class="row" id="topRow">
+		<div class="accountContainer">
+	    	<div class="col-xs-12 col-md-12">
+	    		<div class="panel panel-custom">
+						<div class="panel-heading">
+							<div class="pull-left">
+								<button type="button" class="btn btn-default" data-toggle="modal" data-target="#createProject">Create Project</button>
+								
+							</div>
+							<div class="pull-right">
+								<input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Project" />
+							</div>
+						</div>
+						
+						<table class="table table-hover" id="dev-table" style="font-family: Geneva, Tahoma, Verdana, sans-serif;">
+							<thead align="center">
+								<tr>
+									<th>Category</th>
+									<th>Project Code</th>
+									<th>Start Date</th>
+									<th>End Date</th>
+									<th>Project Manager</th>
+								</tr>
+							</thead>
+							<tbody id="ongoing_table_item">
+							</tbody>
+						</table>
+					</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="createProject" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" id="myModalLabel">Add a card</h4>
+					<a class="btn btn-default pull-right" data-dismiss="modal"><span
+						class="glyphicon glyphicon-remove"></span></a>
+				</div>
+
+				<div class="modal-body">
+					<!-- Name input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="initials">Client Abbreviation
+							</label>
+						<div class="col-md-9">
+							<input id="initials" name="initials" type="text" maxlength="3" placeholder="Please enter exactly 3 letters"
+								class="form-control">
+						</div>
+					</div>
+					<div id="initialsError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="clients">Client 
+							</label>
+						<div class="col-md-9">
+							<input id="client" name="client" type="text" placeholder=""
+								class="form-control">
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<!-- Email input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="description">Description</label>
+						<div class="col-md-9">
+							<textarea  id="description" name="description" placeholder=""
+								class="form-control"></textarea>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<!-- Email input-->
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="startDate">Start
+							Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='startDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="start"/> <span
+									class="input-group-addon"> <span
+									id="startCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="startDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="duration">Duration</label>
+						<div class="col-md-9">
+							<div class="btn-group" data-toggle="buttons" id="duration">
+							  <label class="btn btn-default">
+							    <input type="radio" name="options" id="option1" value="3"> 3 months
+							  </label>
+							  <label class="btn btn-default">
+							    <input type="radio" name="options" id="option2" value="6"> 6 months
+							  </label>
+							  <label class="btn btn-default active">
+							    <input type="radio" name="options" id="option3" value="0" checked="checked"> Others
+							  </label>
+							</div>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="endDate">End Date</label>
+						<div class="col-md-9">
+							<div class='input-group date' id='endDate'>
+								<input type='datetime' placeholder="YYYY-MM-DD"
+									class="form-control" data-date-format="YYYY-MM-DD" id="end"/> <span
+									class="input-group-addon"> <span
+									id="endCalendar" class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="endDateError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="pm">Project
+							Manager</label>
+						<div class="col-md-9">
+							<select id="selectPM" data-placeholder="Assign a Project Manager" class="chosen-select" tabindex="5">
+								<option value=""></option>
+					            <optgroup id="availablePM" label="Available Project Managers">
+					            </optgroup>
+					            <optgroup id="unavailablePM" label="Unavailable Project Managers">
+					            </optgroup>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="skillSet">Skill Set Required</label>
+						<div class="col-md-9">
+							 <select id="skillsetRequired" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Select Skills Required">
+				                <option value=""></option>
+				                <option value=""></option>
+				                <option value="HTML">HTML</option>
+				                <option value="JAVA">JAVA</option>
+				                <option value="MySQL">MySQL</option>
+				                <option value="Java Script">Java Script</option>
+					        </select>
+						</div>
+					</div>
+					<div>&nbsp;</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="assignStaff">Developers</label>
+						<div class="col-md-9">
+							 <select id="selectStaff" class="chosen-select" tabindex="8" multiple="" style="width:350px;" data-placeholder="Developer">
+				                <option value=""></option>
+					            <optgroup  id="availableStaff" label="Developers fit the skill set">
+					            </optgroup>
+				            </select>
+						</div>
+					</div>
+					<div id="inputError" style="color:rgb(228, 105, 105)"></div>
+					<div>&nbsp;</div>
+					<div class="btn-group pull-right">
+						<button class="btn btn-primary" onclick="createProjectInfo()">Create</button>
+						<button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- end of project info -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<!--jquery javascript -->
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<!-- Latest bootstrap -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="http://eonasdan.github.io/bootstrap-datetimepicker/scripts/moment.js"></script>
+	<script src="http://eonasdan.github.io/bootstrap-datetimepicker/scripts/bootstrap-datetimepicker.js"></script>
+	<!-- select functions -->
+	<script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
+	<!-- chart javascript -->
+	<script src="@routes.Assets.at("javascripts/Chart.js")"></script>
+	<script src="@routes.Assets.at("javascripts/date.js")"></script>
+	<!-- own javascript -->
+	<script src="https://api.trello.com/1/client.js?key=61e43c9ee84eda5e86b7e8bc986ad707"></script>	
+	<script src="@routes.Assets.at("javascripts/projectSummary.js")"></script>
+</body>
+</html>
