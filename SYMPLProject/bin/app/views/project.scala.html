@@ -46,7 +46,7 @@
 						class="icon-bar"></span><span class="icon-bar"></span><span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand"><strong>SYMPLProject</strong></a>
+				<a class="navbar-brand"><strong>SYMPLProj</strong></a>
 			</div>
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse"
@@ -118,81 +118,96 @@
 		<div class ="col-md-5">
 			<div class="panel-body">
 				<div class="projectTitle">
-					<h1 id="codeInfo"></h1>
-					<div class="roe">
+					<strong><h1 id="codeInfo"></h1></strong>
+					<br />
 						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editProject">Edit Project</button>
-						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#endProject">Close Project</button>
-					</div>
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#peoceeStatus">Procee</button>
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#approvalLis" onclick="synWithTrello()">Trello Update</button>
+						
 					<br />
 					<h3>
-						Status<span id="statusInfo" class="pull-right"></span>
+						Status:<span id="statusInfo" class="pull-right" style="color:black"></span>
 					</h3>
 					<h3>
-						Start Date<span id="startInfo" class="pull-right"></span>
+						Start Date:<span id="startInfo" class="pull-right" style="color:black"></span>
 					</h3>
 					<h3>
-						Planned End Date<span id="endInfo" class="pull-right"></span>
+						Planned End Date:<span id="endInfo" class="pull-right" style="color:black"></span>
 					</h3>
 					<h3>
-						Actual End Date<span id="actualendInfo" class="pull-right"></span>
+						Actual End Date:<span id="actualendInfo" class="pull-right" style="color:black"></span>
 					</h3>
 					<h3>
-						Project Manager<span id="pmInfo" class="pull-right"></span>
+						Project Manager:<span id="pmInfo" class="pull-right" style="color:black"></span>
 					</h3>
 					<h3>
-						Developers<span id="developerInfo" class="pull-right"></span>
+						Developers:<span id="developerInfo" class="pull-right" style="color:black"></span>
 					</h3>
 					<h3>
-						Last Modified On<span class="pull-right" id="modifiedonInfo"></span>
+						Last Modified On:<span class="pull-right" id="modifiedonInfo" style="color:black"></span>
 					</h3>
 					<h3>
-						Last Modified By<span class="pull-right" id="modifiedbyInfo"></span>
+						Last Modified By:<span class="pull-right" id="modifiedbyInfo" style="color:black"></span>
 					</h3>
-				</div>
-				<div>
-					<p id="descriptionInfo"></p>
+					
+					<div><p id="descriptionInfo"></p></div>
 				</div>
 			</div>
 		</div>
 		
 		<div class ="panel-body col-md-7">
-				<div class="projectTitle">
-					<h1>Sub-Project Metrics</h1>
-				</div>
+			<div class="projectTitle">
+				<h1>Sub-Project Metrics</h1>
+				<div class="chart tab-pane active" id="scatter-chart" style="position: relative; height: 150px;"></div>
+			</div>
 			
-				<div class="nav-tabs-custom">
-	            	<!-- Tabs within a box -->
-	                <!-- Morris chart - Sales -->
-	                    <div class="chart tab-pane active" id="scatter-chart" style="position: relative; height: 225px;"></div>
-	                   
-	            </div><!-- /.nav-tabs-custom -->
-			
+		    <div class="docTitle">
+				<table class="table table-bordered" id="docTable">
+					<tr>
+						<th>Quotation</th>
+						<th>Contract</th>
+						<th>Invoice</th>
+						<th>NDA</th>
+						<th>Sign-off</th>
+						<th>Bug-Log</th>
+					</tr>	
+					<tbody id="docDetail"></tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 	<hr>
+	
+	
 	<!-- end of side bar -->
 	<div class="row" id="bottomRow">
 		<h4><strong>Project Timeline</strong></h4>
 		<a id="addcard" class="btn btn-default pull-left" data-toggle="modal" data-target="#addCard">Create Task</a>
 		<div id="timeline-embed"></div>
 	</div>
-	<div id="endProject" class="modal fade in" aria-hidden="true">
+	
+	
+	<div id="peoceeStatus" class="modal fade in" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true">x</button>
-					<h4 class="modal-title custom_align" id="Heading">End this
-						project?</h4>
+					<h4 class="modal-title custom_align">Status Change</h4>
 				</div>
+				
 				<div class="modal-body">
-
-					<div class="alert alert-warning">
-						<span class="glyphicon glyphicon-warning-sign"></span> Are you
-						sure you want to close this project?
-					</div>
-
+					<label class="control-label">Procee project to:</label>
+					<select>
+					    <option value="" selected="selected">Please select a status</option>
+					    <option value="statusTodo">To do</option>
+					    <option value="statusDoing">Doing</option>
+					    <option value="statusWarranty">Warranty</option>
+					    <option value="statusClosed">Closed</option>
+					    <option value="statusCancel">Cancel</option>
+					</select>
 				</div>
+				
 				<div class="modal-footer ">
 					<button type="button" class="btn btn-warning" onclick="closeProject()">
 						<span class="glyphicon glyphicon-ok-sign"></span>Yes
@@ -206,6 +221,34 @@
 		</div>
 		<!-- /.modal-dialog -->
 	</div>
+		
+	<div id="approvalLis" class="modal fade in" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="approvalList">Approval & Changes List</h3>
+				</div>
+				
+				<div class="modal-body">
+					<table class="table" id="approvalListTable" style="font-family: Geneva, Tahoma, Verdana, sans-serif;">
+							<tbody id="approvalListDetail">
+							</tbody>
+					</table>
+					
+					<table class="table" id="descChangeListTable" style="font-family: Geneva, Tahoma, Verdana, sans-serif;">
+							<tbody id="descChangeListDetail">
+							</tbody>
+					</table>
+				</div>
+				
+				<div class="modal-footer ">
+					<button type="button" class="btn btn-warning" data-dismiss="modal" onclick="window.location.reload()">
+						<span class="glyphicon glyphicon-remove"></span>Close
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>	
 		
 	<div id="createProject" class="modal fade in" aria-hidden="true">
 		<div class="modal-dialog">
@@ -227,6 +270,7 @@
 								class="form-control">
 						</div>
 					</div>
+					
 					<div id="initialsError" style="color:rgb(228, 105, 105)"></div>
 					<div>&nbsp;</div>
 					<div class="form-group">
@@ -237,6 +281,7 @@
 								class="form-control">
 						</div>
 					</div>
+					
 					<div>&nbsp;</div>
 					<!-- Email input-->
 					<div class="form-group">
@@ -279,6 +324,7 @@
 							</div>
 						</div>
 					</div>
+					
 					<div>&nbsp;</div>
 					<div class="form-group">
 						<label class="col-md-3 control-label" for="endDate">End Date</label>
@@ -386,7 +432,7 @@
 						</div>
 					</div>
 					<div>&nbsp;</div>
-					<div class="form-group">
+					<!-- div class="form-group">
 						<label class="col-md-3 control-label" for="taskName">Predecessor Task
 							</label>
 						<div class="col-md-9">
@@ -395,7 +441,7 @@
 				               	</select>
 						</div>
 					</div>
-					<div>&nbsp;</div>
+					<div>&nbsp;</div-->
 					<div class="form-group">
 						<label class="col-md-3 control-label">Planned Start Date</label>
 						<div class="col-md-9">
@@ -447,6 +493,7 @@
 		</div>
 		<!-- /.modal-dialog -->
 	</div>
+	
 	<div id="editProject" class="modal fade in" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -460,7 +507,7 @@
 				<div class="modal-body">
 					<!-- Name input-->
 					<div class="form-group">
-						<label class="col-md-3 control-label" for="initials">Client Abbreviation
+						<label class="col-md-3 control-label" for="initials">Project Number
 							</label>
 						<div class="col-md-9">
 							<input id="editInitials" name="initials" type="text" placeholder="Please enter exactly 3 letters"
@@ -677,7 +724,7 @@
 					<div id="editCardError" style="color:rgb(228, 105, 105)"></div>
 					<div>&nbsp;</div>
 					<div class="btn-group pull-right">
-						<button class="btn btn-primary" id="editSubprojectBtn">Update</button>
+						<button class="btn btn-primary" id="editSubprojectBtn" onclick="editSubproject()">Update</button>
 						<button class="btn btn-danger" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>
@@ -801,9 +848,9 @@
 		    	        		predecessorTask.value = actualEnd + subID;
 		    	        	}
 		    	        	
-		    	        	var addCardPredecessorTask = document.getElementById("addCardPredecessorTask");
-			        		addCardPredecessorTask.appendChild(predecessorTask);
-			        		$("#addCardPredecessorTask").trigger("chosen:updated");
+		    	        	//var addCardPredecessorTask = document.getElementById("addCardPredecessorTask");
+			        		//addCardPredecessorTask.appendChild(predecessorTask);
+			        		//$("#addCardPredecessorTask").trigger("chosen:updated");
 	    	        	}
 	    	        	createStoryJS({
 	    		  			type: 'timeline',
